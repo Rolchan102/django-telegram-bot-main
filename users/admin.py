@@ -17,24 +17,24 @@ class UserAdmin(admin.ModelAdmin):
 
     def broadcast(self, request, queryset):
         """ Выберите пользователей с помощью галочки в панели администратора django, затем выберите "Broadcast" для отправки сообщений"""
-        user_ids = queryset.values_list('user_id', flat=True).distinct().iterator()
+        user_emails = queryset.values_list('user_email', flat=True).distinct().iterator()
         if 'apply' in request.POST:
             broadcast_message_text = request.POST["broadcast_text"]
 
             if DEBUG:  # for test / debug purposes - run in same thread
-                for user_id in user_ids:
+                for user_email in user_emails:
                     send_one_message(
-                        user_id=user_id,
+                        user_email=user_email,
                         text=broadcast_message_text,
                     )
                 self.message_user(request, f"Just broadcasted to {len(queryset)} users")
             else:
-                broadcast_message.delay(text=broadcast_message_text, user_ids=list(user_ids))
+                broadcast_message.delay(text=broadcast_message_text, user_emails=list(user_emails))
                 self.message_user(request, f"Broadcasting of {len(queryset)} messages has been started")
 
             return HttpResponseRedirect(request.get_full_path())
         else:
-            form = BroadcastForm(initial={'_selected_action': user_ids})
+            form = BroadcastForm(initial={'_selected_action': user_emails})
             return render(
                 request, "admin/broadcast_message.html", {'form': form, 'title': u'Broadcast message'}
             )
