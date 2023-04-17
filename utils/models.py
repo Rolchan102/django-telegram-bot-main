@@ -7,7 +7,7 @@ nb = dict(null=True, blank=True)
 
 class CreateTracker(models.Model):
     """Заполняет поле текущей датой и временем при создании объекта"""
-    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Создан')
 
     class Meta:
         abstract = True
@@ -16,7 +16,7 @@ class CreateTracker(models.Model):
 
 class CreateUpdateTracker(CreateTracker):
     """Обновляет поле текущей датой и временем при сохранении объекта"""
-    updated_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Изменен')
 
     class Meta(CreateTracker.Meta):
         abstract = True

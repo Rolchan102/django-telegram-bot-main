@@ -1,8 +1,9 @@
 from django.contrib import admin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-
+from import_export.admin import ImportExportModelAdmin
 from dtb.settings import DEBUG
+from dtb.resources import UserResource
 
 # from users.models import Location
 from users.models import User
@@ -12,18 +13,7 @@ from users.tasks import broadcast_message
 from tgbot.handlers.broadcast_message.utils import send_one_message
 
 
-@admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = [
-        'user_id', 'username', 'first_name',
-        'last_name', 'email', 'city', 'mail_status',
-        'activity', 'language_code', 'deep_link',
-        'created_at', 'updated_at', "is_blocked_bot",
-    ]
-    list_filter = ["is_blocked_bot", "is_admin", ]
-    search_fields = ('username', 'user_id')
-
-    actions = ['broadcast']
 
     def broadcast(self, request, queryset):
         """ Выберите пользователей с помощью галочки в панели администратора django, затем выберите "Broadcast" для отправки сообщений"""
@@ -50,6 +40,17 @@ class UserAdmin(admin.ModelAdmin):
             )
 
 
-# @admin.register(Location)
-# class LocationAdmin(admin.ModelAdmin):
-#     list_display = ['id', 'user_id', 'created_at']
+@admin.register(User)
+class UserAdmin(ImportExportModelAdmin):
+    resource_class = UserResource
+    list_display = [
+        'user_email', 'user_id', 'username',
+        'first_name', 'last_name',  'city',
+        'mail_status', 'activity', 'language_code',
+        'created_at', 'updated_at',
+        "is_blocked_bot", "is_admin",
+    ]
+    list_filter = ["is_blocked_bot", "is_admin", "city", ]
+    search_fields = ('username', 'user_id')
+
+    actions = ['broadcast']

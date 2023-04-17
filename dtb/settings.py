@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 
     # local apps
     'users.apps.UsersConfig',
+    'import_export',
 ]
 
 MIDDLEWARE = [
