@@ -25,7 +25,7 @@ def setup_dispatcher(dp):
     Добавление обработчиков событий из Telegram
     """
     # onboarding
-    dp.add_handler(CommandHandler("start", onboarding_handlers.conv_handler))
+    dp.add_handler(CommandHandler("start", onboarding_handlers.command_start))
 
     # admin commands
     dp.add_handler(CommandHandler("admin", admin_handlers.admin))

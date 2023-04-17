@@ -11,7 +11,7 @@ def _get_csv_from_qs_values(queryset: QuerySet[Dict], filename: str = 'users'):
 
     # csv-модуль может записывать данные только в буфер io.StringIO
     s = io.StringIO()
-    dict_writer = csv.DictWriter(s, fieldnames=keys)
+    dict_writer = csv.DictWriter(s, fieldnames=keys, encoding='utf-8')
     dict_writer.writeheader()
     dict_writer.writerows(queryset)
     s.seek(0)
