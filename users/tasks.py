@@ -22,7 +22,7 @@ def broadcast_message(
     entities: Optional[List[Dict]] = None,
     reply_markup: Optional[List[List[Dict]]] = None,
     sleep_between: float = 0.4,
-    parse_mode=telegram.ParseMode.HTML,
+    parse_mode: Optional[str] = 'HTML',
 ) -> None:
     """ It's used to broadcast message to big amount of users """
     logger.info(f"Going to send message: '{text}' to {len(user_ids)} users")
@@ -44,5 +44,3 @@ def broadcast_message(
         time.sleep(max(sleep_between, 0.1))
 
     logger.info("Broadcast finished!")
-
-
