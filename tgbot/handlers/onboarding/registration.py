@@ -5,6 +5,7 @@ import string
 import time
 import smtplib
 import re
+from users.models import User
 from tgbot.handlers.onboarding import static_text
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -98,6 +99,8 @@ def check_code(update: Update, context: CallbackContext) -> None:
         return
     if codes[user_email] == message_text:
         # Поздравляем! Вы зарегистрированы
+        user = User(email=user_email)
+        user.save()
         update.message.reply_text(text=static_text.result_success)
     else:
         # Неверный код подтверждения

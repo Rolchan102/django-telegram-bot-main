@@ -3,11 +3,11 @@ import traceback
 import html
 
 import telegram
+from django.utils import timezone
 from telegram import Update
 from telegram.ext import CallbackContext
-
+from users.models import UserActionLog, User
 from dtb.settings import TELEGRAM_LOGS_CHAT_ID
-from users.models import User
 
 
 def send_stacktrace_to_tg_chat(update: Update, context: CallbackContext) -> None:

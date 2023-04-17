@@ -22,6 +22,24 @@ class User(CreateUpdateTracker):
     username = models.CharField(max_length=32, **nb)
     first_name = models.CharField(max_length=256)
     last_name = models.CharField(max_length=256, **nb)
+    email = models.CharField(max_length=256, **nb)
+    CITY_CHOICES = (
+        ('Moscow', 'Москва'),
+        ('Volgograd', 'Волгоград'),
+    )
+    city = models.CharField(max_length=256, choices=CITY_CHOICES, **nb)
+    MAIL_STATUS_CHOICES = (
+        ('active', 'Активна'),
+        ('inactive', 'Отключена'),
+    )
+    mail_status = models.CharField(max_length=256, choices=MAIL_STATUS_CHOICES, **nb)
+    ACTIVITY_CHOICES = (
+        ('registered', 'Зарегистрирован'),
+        ('game', 'Играет'),
+        ('pause', 'Пауза'),
+        ('removed', 'Удален'),
+    )
+    activity = models.CharField(max_length=256, choices=ACTIVITY_CHOICES, **nb)
     language_code = models.CharField(max_length=8, help_text="Язык пользователя Telegram", **nb)
     deep_link = models.CharField(max_length=64, **nb)
 
@@ -74,14 +92,32 @@ class User(CreateUpdateTracker):
             return f'@{self.username}'
         return f"{self.first_name} {self.last_name}" if self.last_name else f"{self.first_name}"
 
+    class Meta:
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
 
-class Location(CreateTracker):
-    """Содержит данные о географическом местоположении"""
+
+# class Location(CreateTracker):
+#     """Содержит данные о географическом местоположении"""
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     latitude = models.FloatField()
+#     longitude = models.FloatField()
+#
+#     objects = GetOrNoneManager()
+#
+#     def __str__(self):
+#         return f"user: {self.user}, created at {self.created_at.strftime('(%H:%M, %d %B %Y)')}"
+#
+#     class Meta:
+#         verbose_name = 'Местоположение'
+#         verbose_name_plural = 'Местоположение'
+
+
+class UserActionLog(CreateUpdateTracker):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    latitude = models.FloatField()
-    longitude = models.FloatField()
-
-    objects = GetOrNoneManager()
+    action = models.CharField(max_length=128)
+    text = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"user: {self.user}, created at {self.created_at.strftime('(%H:%M, %d %B %Y)')}"
+        return f"user: {self.user}, made: {self.action}, created at {self.created_at.strftime('(%H:%M, %d %B %Y)')}"

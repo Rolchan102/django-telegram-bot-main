@@ -2,6 +2,7 @@ from functools import wraps
 from typing import Dict, Callable
 
 import telegram
+import datetime
 from telegram import Update
 
 from tgbot.main import bot
@@ -9,11 +10,12 @@ from tgbot.main import bot
 
 def send_typing_action(func: Callable):
     """Отправляет действие ввода при обработке команды функции."""
+
     @wraps(func)
     def command_func(update, context, *args, **kwargs):
         bot.send_chat_action(
             chat_id=update.effective_message.chat_id, action=telegram.ChatAction.TYPING)
-        return func(update, context,  *args, **kwargs)
+        return func(update, context, *args, **kwargs)
 
     return command_func
 
@@ -31,3 +33,9 @@ def extract_user_data_from_update(update: Update) -> Dict:
             if k in user and user[k] is not None
         },
     )
+
+
+def convert_2_user_time(date: datetime.datetime):
+    """Получает дату в UTC. Возвращает в Мск."""
+
+    return date + datetime.timedelta(hours=3)

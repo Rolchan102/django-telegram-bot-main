@@ -19,7 +19,7 @@ def process_telegram_event(update_json):
 
 
 def index(request):
-    return JsonResponse({"error": "invalid URL"})
+    return JsonResponse({"ошибка": "Неверная ссылка!"})
 
 
 class TelegramBotWebhookView(View):
@@ -35,7 +35,7 @@ class TelegramBotWebhookView(View):
             process_telegram_event.delay(json.loads(request.body))
 
         # к примеру: удалить кнопки, введя событие
-        return JsonResponse({"ok": "POST request processed"})
+        return JsonResponse({"ok": "POST-запрос обработан"})
 
     def get(self, request, *args, **kwargs):  # for debug
-        return JsonResponse({"ok": "Get request received! But nothing done"})
+        return JsonResponse({"ok": "Запрос получен! Но ничего не сделано"})

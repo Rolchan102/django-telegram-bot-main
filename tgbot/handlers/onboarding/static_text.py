@@ -1,6 +1,6 @@
 registration_button_text = "Регистрация ☕"
 game_button_text = "Игра 🎮"
-secret_level_button_text = "Админ 🗝"
+# secret_level_button_text = "Админ 🗝"
 
 start_message = "Привет, {first_name}! Добро пожаловать в Random Coffee!"
 registration_message = "Пожалуйста, {first_name}, укажите свой адрес электронной почты"
