@@ -110,7 +110,7 @@ def check_code(update: Update, context: CallbackContext) -> int:
 
 def cancel(update: Update, context: CallbackContext) -> int:
     """Cancel the registration process."""
-    update.message.reply_text('Registration cancelled.')
+    update.message.reply_text('Регистрация отменена.')
     return ConversationHandler.END
 
 
