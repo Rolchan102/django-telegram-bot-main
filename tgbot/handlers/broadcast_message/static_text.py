@@ -5,7 +5,7 @@ broadcast_wrong_format = f'Отправить сообщение всем ваш
                          f'Пример:\n' \
                          f'{broadcast_command} Привет, пользователи! Этот <b>жирный текст</b> для вас, ' \
                          f'а также этот <i>курсив.</i>\n\n' \
-                         f'Примеры использования <code>HTML</code> стиль, которых вы можете найти <a href="https://core.telegram.org/bots/api#html-style">here</a>.'
+                         f'Примеры использования <code>HTML</code> стиль, которых вы можете найти <a href="https://core.telegram.org/bots/api#html-style">здесь</a>.'
 confirm_broadcast = "Подтвердить ✅"
 decline_broadcast = "Отменить ❌"
 message_is_sent = "Сообщение отправлено ✅"

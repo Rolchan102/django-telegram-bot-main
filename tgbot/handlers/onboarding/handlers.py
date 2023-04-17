@@ -7,13 +7,9 @@ from telegram.ext import CallbackContext, ConversationHandler, CommandHandler, M
 from tgbot.handlers.onboarding import static_text
 from tgbot.handlers.utils.info import extract_user_data_from_update
 from users.models import User
+from tgbot.handlers.onboarding import registration
 from tgbot.handlers.onboarding.keyboards import make_keyboard_for_start_command
-
-allowed_domains = ['syssoft.ru']
-admin_emails = {'a.novoseltsev@syssoft.ru': 'active', 'askerov@syssoft.ru': 'inactive'}
-times = {}
-# Define your states
-USER_EMAIL, USER_CODE = range(2)
+from tgbot.handlers.onboarding.keyboards import make_keyboard_for_comeback_command
 
 
 def command_start(update: Update, context: CallbackContext) -> None:
@@ -21,11 +17,13 @@ def command_start(update: Update, context: CallbackContext) -> None:
 
     if created:
         text = static_text.start_message.format(first_name=u.first_name)
+        reply_markup = make_keyboard_for_start_command()
+        update.message.reply_text(text=text, reply_markup=reply_markup)
+
     else:
         text = static_text.start_message.format(first_name=u.first_name)
-
-    update.message.reply_text(text=text,
-                              reply_markup=make_keyboard_for_start_command())
+        reply_markup = make_keyboard_for_comeback_command()
+        update.message.reply_text(text=text, reply_markup=reply_markup)
 
 
 def secret_level(update: Update, context: CallbackContext) -> None:

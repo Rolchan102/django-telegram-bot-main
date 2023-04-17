@@ -36,6 +36,9 @@ def setup_dispatcher(dp):
     dp.add_handler(CommandHandler("ask_location", location_handlers.ask_for_location))
     dp.add_handler(MessageHandler(Filters.location, location_handlers.location_handler))
 
+    # registration
+    dp.add_handler(CallbackQueryHandler(start, pattern='start_registration'))
+
     # secret level
     dp.add_handler(CallbackQueryHandler(onboarding_handlers.secret_level, pattern=f"^{SECRET_LEVEL_BUTTON}"))
 
