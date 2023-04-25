@@ -14,7 +14,7 @@ Django + python-telegram-bot + Celery + Redis + Postgres + Dokku + GitHub Action
 * [Production-ready](https://github.com/Rolchan102/django-telegram-bot-main/wiki/Production-Deployment-using-Dokku) deployment using [Dokku](https://dokku.com)
 * Telegram API usage in polling or [webhook mode](https://core.telegram.org/bots/api#setwebhook)
 * Export all users in `.csv`
-* Native telegram [commands in menu](https://github.com/Rolchan102/django-telegram-bot-main/blob/main/.github/imgs/bot_commands_example.jpg)
+* Native telegram [commands in menu](https://github.com/Rolchan102/django-telegram-bot-main/blob/master/.github/imgs/bot_commands_example.jpg)
   * In order to edit or delete these commands you'll need to use `set_my_commands` bot's method just like in [tgbot.dispatcher.setup_my_commands](https://github.com/Rolchan102/django-telegram-bot-main/blob/main/tgbot/dispatcher.py#L150-L156)
 
 Built-in Telegram bot methods:
