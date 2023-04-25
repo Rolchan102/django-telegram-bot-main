@@ -4,7 +4,7 @@
     <img src="https://user-images.githubusercontent.com/50623190/201977740-68ef4044-9cfa-45da-8897-2a90ecfa33ae.png" align="center" height="350px" weight="350px">
 </p>
 
-Sexy Django + python-telegram-bot + Celery + Redis + Postgres + Dokku + GitHub Actions template. Production-ready Telegram bot with database, admin panel and a bunch of useful built-in methods.
+Django + python-telegram-bot + Celery + Redis + Postgres + Dokku + GitHub Actions template. Production-ready Telegram bot with database, admin panel and a bunch of useful built-in methods.
 
 
 ⭐ graph: 
