@@ -1,42 +1,24 @@
-import datetime
-
-from django.utils import timezone
 from telegram import Update
 from telegram.ext import CallbackContext, ConversationHandler, CommandHandler, MessageHandler, Filters
 
 from tgbot.handlers.onboarding import static_text
-from tgbot.handlers.utils.info import extract_user_data_from_update
-from users.models import User
-from tgbot.handlers.onboarding.keyboards import make_keyboard_for_start_command
-from tgbot.handlers.onboarding.keyboards import make_keyboard_for_comeback_command
+from tgbot.handlers.onboarding import registration
+
+ALLOWED_DOMAINS = ['syssoft.ru']
+ACTIVE_EMAILS = {'a.novoseltsev@syssoft.ru': 'active', 'askerov@syssoft.ru': 'inactive'}
+user_email = {}
+codes = {}
+times = {}
 
 
 def command_start(update: Update, context: CallbackContext) -> None:
-    u, created = User.get_user_and_created(update, context)
+    user = update.message.from_user
+    first_name = user.first_name
+    text = static_text.registration_message.format(first_name=first_name)
+    update.message.reply_text(text=text)
 
-    if created:
-        text = static_text.start_message.format(first_name=u.first_name)
-        reply_markup = make_keyboard_for_start_command()
-        update.message.reply_text(text=text, reply_markup=reply_markup)
+    # Ask the user to enter their email address
+    registration.check_email(update, context)
 
-    else:
-        text = static_text.start_message.format(first_name=u.first_name)
-        reply_markup = make_keyboard_for_comeback_command()
-        update.message.reply_text(text=text, reply_markup=reply_markup)
-
-
-# def secret_level(update: Update, context: CallbackContext) -> None:
-#     # callback_data: SECRET_LEVEL_BUTTON variable from manage_data.py
-#     """Секретные функции админа"""
-#     user_id = extract_user_data_from_update(update)['user_id']
-#     text = static_text.unlock_secret_room.format(
-#         user_count=User.objects.count(),
-#         active_24=User.objects.filter(updated_at__gte=timezone.now() - datetime.timedelta(hours=24)).count()
-#     )
-#
-#     context.bot.edit_message_text(
-#         text=text,
-#         chat_id=user_id,
-#         message_id=update.callback_query.message.message_id,
-#         parse_mode='HTML'
-#     )
+    # Change conversation state to ENTER_EMAIL
+    registration.check_code(update, context)

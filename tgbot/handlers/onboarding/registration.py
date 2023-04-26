@@ -17,53 +17,42 @@ codes = {}
 times = {}
 
 
-def start(update: Update, context: CallbackContext) -> None:
-    # укажите свой адрес электронной почты
-    update.message.reply_text(text=static_text.registration_message)
-
-
 def is_valid_email(email):
     return bool(re.match(r"[^@]+@[^@]+\.[^@]+", email))
 
 
-def check_email(update: Update, context: CallbackContext) -> None:
-    global user_email, codes, times
-    user_email = update.message.text.lower()
-    # Check if the message contains a valid email address
-    if not is_valid_email(user_email):
-        # Неверный адрес электронной почты
-        update.message.reply_text(text=static_text.invalid_email)
-        return
-
-    user_domain = user_email.split("@")[-1]
+def check_email(update, context):
+    email = context.user_data.get('email')
+    codes = context.user_data.setdefault('codes', {})
+    times = context.user_data.setdefault('times', {})
 
     # Check if the domain is allowed for registration
+    user_domain = email.split("@")[-1]
     if user_domain not in ALLOWED_DOMAINS:
         # Домен не разрешен для регистрации!
         update.message.reply_text(text=static_text.domain_message)
         return
 
     # Check if the email is active
-    if user_email in ACTIVE_EMAILS and ACTIVE_EMAILS[user_email] == "active":
+    if email in ACTIVE_EMAILS and ACTIVE_EMAILS[email] == "active":
         # По вашему адресу отправлен код подтверждения
-        send_email(user_email)
+        send_email(email, codes, times)
         update.message.reply_text(text=static_text.code_message)
     else:
         # Адрес не активен!
         update.message.reply_text(text=static_text.email_message)
 
 
-def send_email(user_email):
-    global codes, times
+def send_email(email, codes, times):
     # Генерируем случайный код подтверждения
     code = ''.join(random.choice(string.digits) for _ in range(6))
     # Запоминаем код в словаре codes
-    codes[user_email] = code
+    codes[email] = code
     # Запоминаем время отправки кода в словаре times
-    times[user_email] = time.time()
+    times[email] = time.time()
 
-    smtp_username = "@gmail.com"
-    smtp_password = ""
+    smtp_username = "novosltsev2010@gmail.com"
+    smtp_password = "uvxhzvmfpvdhkhoo"
 
     try:
         smtp_conn = smtplib.SMTP('smtp.gmail.com: 587')

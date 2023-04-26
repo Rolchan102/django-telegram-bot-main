@@ -18,10 +18,10 @@ class AdminUserManager(Manager):
 
 class User(CreateUpdateTracker):
     """Содержит данные о пользователе"""
-    user_email = models.EmailField(null=True, blank=True, default='', verbose_name='Почта')
-    user_id = models.PositiveBigIntegerField(null=True, unique=True, verbose_name='Telegram ID')
-    username = models.CharField(max_length=255, null=True, blank=True, verbose_name='Ник в TG')
-    first_name = models.CharField(max_length=256, verbose_name='Имя')
+    user_email = models.EmailField(primary_key=True, unique=True, verbose_name='Почта')
+    user_id = models.PositiveBigIntegerField(verbose_name='Telegram ID')
+    username = models.CharField(max_length=256, **nb, verbose_name='Ник в TG')
+    first_name = models.CharField(max_length=256, **nb, verbose_name='Имя')
     last_name = models.CharField(max_length=256, **nb, verbose_name='Фамилия')
     CITY_CHOICES = (
         ('Moscow', 'Москва'),
