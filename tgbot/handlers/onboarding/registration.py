@@ -51,8 +51,8 @@ def send_email(email, codes, times):
     # Запоминаем время отправки кода в словаре times
     times[email] = time.time()
 
-    smtp_username = "novosltsev2010@gmail.com"
-    smtp_password = "uvxhzvmfpvdhkhoo"
+    smtp_username = "@gmail.com"
+    smtp_password = ""
 
     try:
         smtp_conn = smtplib.SMTP('smtp.gmail.com: 587')
