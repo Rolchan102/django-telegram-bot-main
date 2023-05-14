@@ -1,4 +1,4 @@
-from datetime import timedelta, datetime
+from datetime import timedelta
 
 from django.utils import timezone
 from telegram import Update
@@ -15,6 +15,10 @@ from email.mime.multipart import MIMEMultipart
 from django.conf import settings
 
 
+class HandledError(Exception):
+    pass
+
+
 def is_valid_email(email):
     return bool(re.match(r"[^@]+@[^@]+\.[^@]+", email))
 
@@ -22,22 +26,26 @@ def is_valid_email(email):
 def check_email(update: Update, context):
     email = update.message.text
 
-    # Check if the domain is allowed for registration
+    # Validate email
+    if '@' not in email:
+        update.message.reply_text(text=static_text.invalid_email)
+        raise HandledError
+
+    # Домен не разрешен для регистрации!
     user_domain = email.split("@")[-1]
     if user_domain not in settings.ALLOWED_DOMAINS:
-        # Домен не разрешен для регистрации!
         update.message.reply_text(text=static_text.domain_message)
-        return
+        raise HandledError
 
-    # Check if the email is active
-    if Email.objects.filter(email=email, is_active=True).exists():
-        # По вашему адресу отправлен код подтверждения
-        context.user_data['email'] = email
-        send_email(email)
-        update.message.reply_text(text=static_text.code_message)
-    else:
-        # Адрес не активен!
+    # Адрес не активен!
+    if not Email.objects.filter(email=email, is_active=True).exists():
         update.message.reply_text(text=static_text.email_message)
+        raise HandledError
+
+    # По вашему адресу отправлен код подтверждения
+    context.user_data['email'] = email
+    send_email(email)
+    update.message.reply_text(text=static_text.code_message)
 
 
 def send_email(email: str):
@@ -77,15 +85,15 @@ def check_code(update: Update, context: CallbackContext) -> None:
     if not email_code_object:
         # Нет записи об отправке кода подтверждения. Попробуйте еще раз.
         update.message.reply_text(text=static_text.code_unsuccess_1)
-        return
+        raise HandledError
     if email_code_object.created_at < timezone.now() - timedelta(minutes=20):
         # Время жизни кода (20 минут) истекло. Попробуйте еще раз
         update.message.reply_text(text=static_text.code_unsuccess_2)
-        return
+        raise HandledError
     if email_code_object.code != update.message.text:
         # Неверный код подтверждения
         update.message.reply_text(text=static_text.code_wrong)
-        return
+        raise HandledError
 
     # Поздравляем! Вы зарегистрированы
     email_code_object.is_used = True

@@ -3,8 +3,7 @@ from enum import IntFlag, auto
 from telegram import Update
 from telegram.ext import CallbackContext, ConversationHandler
 
-from tgbot.handlers.onboarding import static_text
-from tgbot.handlers.onboarding import registration
+from tgbot.handlers.onboarding import static_text, registration
 
 
 class RegistrationStates(IntFlag):
@@ -12,7 +11,7 @@ class RegistrationStates(IntFlag):
     CHECK_CODE = auto()
 
 
-def command_start(update: Update, context: CallbackContext) -> int:
+def command_start(update: Update, context: CallbackContext):
     text = static_text.registration_message.format(
         first_name=update.message.from_user.first_name
     )
@@ -20,13 +19,25 @@ def command_start(update: Update, context: CallbackContext) -> int:
     return RegistrationStates.CHECK_EMAIL
 
 
-def check_email_handler(update: Update, context: CallbackContext) -> int:
-    # Ask the user to enter their email address
-    registration.check_email(update, context)
+def check_email_handler(update: Update, context: CallbackContext):
+    """
+    Validate email and send code
+    """
+    try:
+        registration.check_email(update, context)
+    except registration.HandledError:
+        return ConversationHandler.END
+
     return RegistrationStates.CHECK_CODE
 
 
-def check_code_handler(update: Update, context: CallbackContext) -> None:
-    # Change conversation state to ENTER_EMAIL
-    registration.check_code(update, context)
+def check_code_handler(update: Update, context: CallbackContext):
+    """
+    Validate code and create User
+    """
+    try:
+        registration.check_code(update, context)
+    except registration.HandledError:
+        return RegistrationStates.CHECK_CODE
+
     return ConversationHandler.END
