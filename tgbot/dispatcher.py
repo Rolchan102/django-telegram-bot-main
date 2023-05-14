@@ -2,9 +2,12 @@
     Telegram event handlers
 """
 from telegram.ext import (
-    Dispatcher, Filters,
-    CommandHandler, MessageHandler,
+    Dispatcher,
+    Filters,
+    CommandHandler,
+    MessageHandler,
     CallbackQueryHandler,
+    ConversationHandler,
 )
 
 from dtb.settings import DEBUG
@@ -12,10 +15,16 @@ from tgbot.handlers.broadcast_message.manage_data import CONFIRM_DECLINE_BROADCA
 from tgbot.handlers.broadcast_message.static_text import broadcast_command
 
 from tgbot.handlers.utils import files, error
-from tgbot.handlers.onboarding import handlers as onboarding_handlers
+from tgbot.handlers.onboarding.handlers import (
+    RegistrationStates,
+    command_start,
+    check_code_handler,
+    check_email_handler
+)
 from tgbot.handlers.onboarding import registration as onboarding_registration
 from tgbot.handlers.onboarding import coffee
 from tgbot.handlers.broadcast_message import handlers as broadcast_handlers
+from tgbot.handlers.utils.cancel import cancel
 from tgbot.main import bot
 
 
@@ -24,7 +33,16 @@ def setup_dispatcher(dp):
     Добавление обработчиков событий из Telegram
     """
     # start
-    dp.add_handler(CommandHandler("start", onboarding_handlers.command_start))
+    dp.add_handler(
+        ConversationHandler(
+            entry_points=[CommandHandler("start", command_start)],
+            states={
+                RegistrationStates.CHECK_EMAIL: [MessageHandler(Filters.text & ~Filters.command, check_email_handler)],
+                RegistrationStates.CHECK_CODE: [MessageHandler(Filters.text & ~Filters.command, check_code_handler)],
+            },
+            fallbacks=[CommandHandler('cancel', cancel)]
+        )
+    )
 
     # # registration
     # mail_pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'

@@ -1,7 +1,9 @@
-import os, django
+import os
+
+from django import setup
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'dtb.settings')
-django.setup()
+setup()
 
 from telegram import Bot
 from telegram.ext import Updater
