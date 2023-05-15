@@ -122,18 +122,6 @@ class UserMeeting(CreateUpdateTracker):
         return f'Встреча {self.user_1=} и {self.user_2=}'
 
 
-class Email(CreateUpdateTracker):
-    email = models.EmailField(unique=True)
-    is_active = models.BooleanField()
-
-    class Meta:
-        verbose_name = 'Почтовый адресс'
-        verbose_name_plural = 'Почтовые адреса'
-
-    def __str__(self):
-        return self.email
-
-
 class EmailCode(CreateUpdateTracker):
     email = models.EmailField()
     code = models.CharField(max_length=6)

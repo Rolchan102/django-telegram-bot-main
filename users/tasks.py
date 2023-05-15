@@ -9,8 +9,13 @@ import telegram
 
 from dtb.celery import app
 from celery.utils.log import get_task_logger
-from tgbot.handlers.broadcast_message.utils import send_one_message, from_celery_entities_to_entities, \
-    from_celery_markup_to_markup
+from tgbot.handlers.broadcast_message.utils import (
+    send_one_message,
+    from_celery_entities_to_entities,
+    from_celery_markup_to_markup,
+)
+from tgbot.handlers.onboarding import static_text
+from users.models import User
 
 logger = get_task_logger(__name__)
 
@@ -44,3 +49,15 @@ def broadcast_message(
         time.sleep(max(sleep_between, 0.1))
 
     logger.info("Broadcast finished!")
+
+@app.task
+def pre_game_survey():
+    users = User.objects.filter(activity='game')
+    for user in users:
+        send_one_message(
+            user.user_id,
+            text=static_text.start_week_message,
+        )
+    users.objects.update(activity='pause')
+    telegram.Sta
+

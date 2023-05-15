@@ -8,7 +8,7 @@ import string
 import smtplib
 import re
 
-from users.models import User, Email, EmailCode
+from users.models import User, EmailCode
 from tgbot.handlers.onboarding import static_text
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -38,7 +38,7 @@ def check_email(update: Update, context):
         raise HandledError
 
     # Адрес не активен!
-    if not Email.objects.filter(email=email, is_active=True).exists():
+    if not User.objects.filter(user_email=email, mail_status='active').exists():
         update.message.reply_text(text=static_text.email_message)
         raise HandledError
 
@@ -99,5 +99,8 @@ def check_code(update: Update, context: CallbackContext) -> None:
     email_code_object.is_used = True
     email_code_object.save()
 
-    User.objects.create(user_email=email_code_object.email, user_id=update.message.from_user.id)
+    user = User.objects.get(user_email=email_code_object.email)
+    user.user_id = update.message.from_user.id
+    user.activity = 'registered'
+    user.save()
     update.message.reply_text(text=static_text.result_success)
