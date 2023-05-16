@@ -56,7 +56,8 @@ class User(CreateUpdateTracker):
     def get_user_and_created(cls, update: Update, context: CallbackContext) -> Tuple[User, bool]:
         """Проверяет, был ли пользователь только что создан, или он уже существовал"""
         data = extract_user_data_from_update(update)
-        u, created = cls.objects.update_or_create(user_email=data["user_email"], defaults=data)
+
+        u, created = cls.objects.update_or_create(user_email=data["email"], defaults=data)
 
         if created:
             # Save deep_link to User model
@@ -104,3 +105,31 @@ class UserActionLog(CreateUpdateTracker):
 
     def __str__(self):
         return f"user: {self.user}, made: {self.action}, created at {self.created_at.strftime('(%H:%M, %d %B %Y)')}"
+
+
+class UserMeeting(CreateUpdateTracker):
+    user_1 = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='meetings_1')
+    user_2 = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='meetings_2')
+
+    is_met = models.BooleanField(null=True)
+    is_liked = models.BooleanField(null=True)
+
+    class Meta:
+        verbose_name = 'Встреча'
+        verbose_name_plural = 'Встречи'
+
+    def __str__(self):
+        return f'Встреча {self.user_1=} и {self.user_2=}'
+
+
+class EmailCode(CreateUpdateTracker):
+    email = models.EmailField()
+    code = models.CharField(max_length=6)
+    is_used = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = 'Код активации'
+        verbose_name_plural = 'Коды активации'
+
+    def __str__(self):
+        return f'Код активации для {self.email}'

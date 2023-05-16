@@ -184,3 +184,6 @@ TELEGRAM_LOGS_CHAT_ID = os.getenv("TELEGRAM_LOGS_CHAT_ID", default=None)
 #     send_default_pii=True
 # )
 
+
+# SERVICE CONSTS
+ALLOWED_DOMAINS = ['syssoft.ru', 'gmail.com']
