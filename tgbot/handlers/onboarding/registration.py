@@ -102,5 +102,8 @@ def check_code(update: Update, context: CallbackContext) -> None:
     user = User.objects.get(user_email=email_code_object.email)
     user.user_id = update.message.from_user.id
     user.activity = 'registered'
+    user.username = update.message.from_user.username
+    user.first_name = update.message.from_user.first_name
+    user.last_name = update.message.from_user.last_name
     user.save()
     update.message.reply_text(text=static_text.result_success)
