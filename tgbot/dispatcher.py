@@ -22,7 +22,7 @@ from tgbot.handlers.onboarding.handlers import (
     RegistrationStates,
     command_start,
     check_code_handler,
-    check_email_handler, is_player_in_game_handler, is_met_handler
+    check_email_handler, is_player_in_game_handler, is_met_handler, command_game
 )
 from tgbot.handlers.onboarding import registration as onboarding_registration
 from tgbot.handlers.onboarding import coffee
@@ -46,6 +46,7 @@ def setup_dispatcher(dp):
             fallbacks=[CommandHandler('cancel', cancel)]
         )
     )
+    dp.add_handler(CommandHandler("game", command_game))
     dp.add_handler(
         MessageHandler(
             filters=TimeFilter(time_start=time(hour=9), time_end=time(hour=9, minute=15), weekday=0),

@@ -26,6 +26,15 @@ def command_start(update: Update, context: CallbackContext):
     return RegistrationStates.CHECK_EMAIL
 
 
+def command_game(update: Update, context: CallbackContext):
+    user = User.objects.get_or_none(user_id=update.message.from_user.id)
+    if not user:
+        update.message.reply_text(static_text.need_registration)
+        return
+    user.activity = 'game'
+    update.message.reply_text(static_text.answer_is_ok)
+
+
 def check_email_handler(update: Update, context: CallbackContext):
     """
     Validate email and send code
