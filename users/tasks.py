@@ -50,14 +50,40 @@ def broadcast_message(
 
     logger.info("Broadcast finished!")
 
+
 @app.task
 def pre_game_survey():
+    players_via_city = {}
+    for user in User.objects.filter(activity='game'):
+        players_via_city[user.city] = players_via_city.get(user.city, []) + [user]
+
+    for city_users in players_via_city.items():
+        for user in city_users:
+            send_one_message(
+                user.user_id,
+                text=static_text.start_week_message,
+            )
+            players_via_city[user.city]
+            pass
+
+
+@app.task
+def start_game():
     users = User.objects.filter(activity='game')
     for user in users:
         send_one_message(
             user.user_id,
-            text=static_text.start_week_message,
+            text=static_text.start_game_message,
         )
     users.objects.update(activity='pause')
-    telegram.Sta
 
+
+@app.task
+def post_game_survey():
+    users = User.objects.filter(activity='game')
+    for user in users:
+        send_one_message(
+            user.user_id,
+            text=static_text.end_game_message1,
+        )
+    users.objects.update(activity='pause')
