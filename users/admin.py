@@ -6,7 +6,7 @@ from dtb.settings import DEBUG
 from dtb.resources import UserResource
 
 # from users.models import Location
-from users.models import User, Email, EmailCode
+from users.models import User, EmailCode
 from users.forms import BroadcastForm
 
 from users.tasks import broadcast_message
@@ -56,5 +56,4 @@ class UserAdmin(ImportExportModelAdmin):
     actions = ['broadcast']
 
 
-admin.site.register(Email)
 admin.site.register(EmailCode)
